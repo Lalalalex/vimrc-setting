@@ -1,0 +1,84 @@
+"ctrl+n Enable/disable mouse                                                                                                                                                                               
+"ctrl+t Convert tab to spaces
+"ctrl+f Switch to full/simple
+
+set t_Co=256
+colorscheme torte
+set cursorline
+hi CursorLine cterm=none ctermbg=DarkMagenta ctermfg=White
+set nocompatible
+set number
+set ruler
+set cindent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set confirm
+set backspace=indent,eol,start
+set laststatus=2
+set statusline=[%{expand('%:p')}][%{strlen(&fenc)?&fenc:&enc},\ %{&ff},\ %{strlen(&filetype)?&filetype:'plain'}]%{FileSize()}%{IsBinary()}%=%c,%l/%L\ [%3p%%]
+
+function IsBinary()
+    if (&binary == 0)
+        return ""
+    else
+        return "[Binary]"
+    endif
+endfunction
+
+function FileSize()
+    let bytes = getfsize(expand("%:p"))
+    if bytes <= 0
+        return "[Empty]"
+    endif
+    if bytes < 1024
+        return "[" . bytes . "B]"
+    elseif bytes < 1048576
+        return "[" . (bytes / 1024) . "KB]"
+    else
+        return "[" . (bytes / 1048576) . "MB]"
+    endif
+endfunction
+
+set showmode
+set wrap
+set mouse=a
+set fileencodings=utf-8,utf-16,big5,gb2312,gbk,gb18030,euc-jp,euc-kr,latin1
+set encoding=utf-8
+
+map <C-n> :call SwitchMouseMode()<CR>
+map! <C-n> <Esc>:call SwitchMouseMode()<CR>
+function SwitchMouseMode()
+    if (&mouse == "a")
+        let &mouse = ""
+        echo "Mouse is disabled."
+    else
+        let &mouse = "a"
+        echo "Mouse is enabled."
+    endif
+endfunction
+
+map <C-t> :call TabToSpaces()<CR>
+map! <C-t> <Esc>:call TabToSpaces()<CR>
+function TabToSpaces()
+    retab
+    echo "Convert tab to spaces."
+endfunction
+
+map <C-f> :call SwitchFullSimpleMode()<CR>
+map! <C-f> <Esc>:call SwitchFullSimpleMode()<CR>
+function SwitchFullSimpleMode()
+    if (&mouse == "a")
+        let &mouse = ""
+        set nocindent
+        set nonumber
+        set wrap
+        echo "Switch to simple mode.(nomouse, nonumber, nocindent, wrap)"
+    else
+        let &mouse = "a"
+        set cindent
+        set number
+        set nowrap
+        echo "Switch to full mode.(mouse, number, cindent, nowrap)"
+    endif
+endfunction  
